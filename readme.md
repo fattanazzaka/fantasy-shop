@@ -13,6 +13,7 @@
 ## Alur pengerjaan step by step
 ```bash
 - Membuat directory pada local dan repository baru pada github sesuai dengan project yang akan dibuat
+- menginstall dan mengaktifkan enviroment agar dependencies tidak konflik dengan dependencies yang ada di local
 - Install dependencies yang diperlukan pada directory
 - Melakukan integrasi antara local dengan repo pada github
 - Menambahkan aplikasi main pada project
@@ -22,6 +23,30 @@
 - Melakukan perubahan pada file views di aplikasi main dan membuat fungsi untuk mengembalikan dictionary berisi data sesuai dengan yang dibutuhkan pada html dan melakukan render html
 - menambahkan urls pada aplikasi main dengan path kosong maka akan menampilkan aplikasi main lalu menambahkannya pada urls project
 - Melakukan deployment pada pacil web service
+```
+
+## Bagan
+```
+```
+
+## Penjelasan settings.py
+```
+settings bertugas sebagai pusat konfigurasi dari web yang dibuat. Mulai dari mengatur allowed hosts (host/domain yang diizinkan), allowed apps untuk mengatur app apa saja yang akan digunakan
+```
+
+## Penjelasan fungsi migrate
+```
+migrate bertujuan untuk mencatat setiap perubahan pada models, contoh menambah/rename atribut, lalu migrate menerjemahkan perubahan tersebut untuk dijalankan di database
+```
+
+## Mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+```
+Django memungkinkan kita untuk membuat real product tanpa perlu mempelajari SQL secara mendalam, jadi pemula bisa lebih fokus pada logika pengembangan perangkat lunak terlebih dahulu tanpa perlu takut untuk mempelajari SQL sebagai database.
+```
+
+## Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
+```
+Sudah cukup baik, responsif dan sangat membantu.
 ```
 
 <!-- ## 🛠 Installation
