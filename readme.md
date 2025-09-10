@@ -27,6 +27,8 @@
 
 ## Bagan
 ```
+<img width="1707" height="957" alt="Screenshot 2025-09-10 110335" src="https://github.com/user-attachments/assets/287a256b-ec2c-4d64-8990-4682546baf2d" />
+
 ```
 
 ## Penjelasan settings.py
