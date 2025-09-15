@@ -1,5 +1,3 @@
-
-
 ## Alur pengerjaan step by step
 ```bash
 - Membuat directory pada local dan repository baru pada github sesuai dengan project yang akan dibuat
@@ -40,10 +38,3 @@ Sudah cukup baik, responsif dan sangat membantu.
 ```
 <<<<<<< HEAD
 =======
-
-<!-- ## 🛠 Installation
-```bash
-git clone https://github.com/username/myproject.git
-cd myproject
-npm install -->
->>>>>>> cfdc7f16dd083a555bfec15f59f9b515f79a64e8
