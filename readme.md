@@ -16,8 +16,8 @@
 ```
 
 ## Bagan
-```
-```
+<img width="1707" height="957" alt="Screenshot 2025-09-10 110335" src="https://github.com/user-attachments/assets/a7eed1e6-dc4b-483c-a40e-ce4256ac7be9" />
+
 
 ## Penjelasan settings.py
 ```
@@ -38,3 +38,12 @@ Django memungkinkan kita untuk membuat real product tanpa perlu mempelajari SQL 
 ```
 Sudah cukup baik, responsif dan sangat membantu.
 ```
+<<<<<<< HEAD
+=======
+
+<!-- ## 🛠 Installation
+```bash
+git clone https://github.com/username/myproject.git
+cd myproject
+npm install -->
+>>>>>>> cfdc7f16dd083a555bfec15f59f9b515f79a64e8
