@@ -1,14 +1,4 @@
-<!-- # 🚀 MyProject
 
-
----
-
-## 📖 Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license) -->
 
 ## Alur pengerjaan step by step
 ```bash
@@ -48,9 +38,3 @@ Django memungkinkan kita untuk membuat real product tanpa perlu mempelajari SQL 
 ```
 Sudah cukup baik, responsif dan sangat membantu.
 ```
-
-<!-- ## 🛠 Installation
-```bash
-git clone https://github.com/username/myproject.git
-cd myproject
-npm install -->
