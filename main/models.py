@@ -4,12 +4,13 @@ from django.db import models
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
-        ('basketball', 'Basketball Shoes'),
-        ('football', 'Football Shoes'),
-        ('running', 'Running Shoes'),
-        ('tennis', 'Tennis Shoes'),
+        ('shoes', 'Football Shoes'),
+        ('jersey', 'Jersey and Apparel'),
+        ('equipment', 'Training Equipment'),
+        ('merchandise', 'Club Merchandise'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     price = models.IntegerField()
     description = models.TextField()

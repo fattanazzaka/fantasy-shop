@@ -3,6 +3,7 @@ from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import ProductForm
 from main.models import Product
+from main.forms import DeleteProductForm
 
 
 def show_main(request):
@@ -34,8 +35,21 @@ def show_product(request, id):
     context = {
         'product': product
     }
-
     return render(request, "product_detail.html", context)
+
+
+def delete_product_by_id(request):
+    if request.method == "POST":
+        form = DeleteProductForm(request.POST)
+        if form.is_valid():
+            product_id = form.cleaned_data["product_id"]
+            product = get_object_or_404(Product, id=product_id)
+            product.delete()
+            return redirect("main:show_main")  # balik ke daftar produk
+    else:
+        form = DeleteProductForm()
+
+    return render(request, "delete_product.html", {"form": form})
 
 def show_xml(request):
      products_list = Product.objects.all()

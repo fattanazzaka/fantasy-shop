@@ -1,40 +1,41 @@
-## Alur pengerjaan step by step
-```bash
-- Membuat directory pada local dan repository baru pada github sesuai dengan project yang akan dibuat
-- menginstall dan mengaktifkan enviroment agar dependencies tidak konflik dengan dependencies yang ada di local
-- Install dependencies yang diperlukan pada directory
-- Melakukan integrasi antara local dengan repo pada github
-- Menambahkan aplikasi main pada project
-- Mengubah models pada main sesuai dengan ketentuan soal dan yang dibutuhkan
-- melakukan migration untuk data yang sudah diubah
-- Membuat directory templates pada aplikasi main yang berisi html sesuai dengan apa yang ingin ditampilkan pada aplikasi main
-- Melakukan perubahan pada file views di aplikasi main dan membuat fungsi untuk mengembalikan dictionary berisi data sesuai dengan yang dibutuhkan pada html dan melakukan render html
-- menambahkan urls pada aplikasi main dengan path kosong maka akan menampilkan aplikasi main lalu menambahkannya pada urls project
-- Melakukan deployment pada pacil web service
+## mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+```
+Dalam proses pengembangan, ada kalanya kita perlu mengirimkan data dari satu stack ke stack lainnya contohnya mengirim data dari backend ke frontend. Data yang dikirimkan bisa bermacam-macam bentuknya. Beberapa contoh format data yang umum digunakan antara lain HTML, XML, dan JSON. Implementasi data delivery dalam bentuk HTML sudah kamu pelajari pada tutorial sebelumnya. Pada tutorial ini akan diajarkan terkait XML dan JSON.
+
 ```
 
-## Bagan
-<img width="1707" height="957" alt="Screenshot 2025-09-10 110335" src="https://github.com/user-attachments/assets/a7eed1e6-dc4b-483c-a40e-ce4256ac7be9" />
-
-
-## Penjelasan settings.py
+## Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
 ```
-settings bertugas sebagai pusat konfigurasi dari web yang dibuat. Mulai dari mengatur allowed hosts (host/domain yang diizinkan), allowed apps untuk mengatur app apa saja yang akan digunakan
+Menurut dari yang saya lihat sendiri, JSON memiliki format yang lebih rapi dan ringkas sehingga lebih mudah dibaca manusia. Selain itu berdasarkan hasil pencarian saya JSON lebih ringan dan cepat sehingga untuk web dan aplikasi modern JSON lebih populer
 ```
 
-## Penjelasan fungsi migrate
+
+## Fungi method is_valid() pada form django
 ```
-migrate bertujuan untuk mencatat setiap perubahan pada models, contoh menambah/rename atribut, lalu migrate menerjemahkan perubahan tersebut untuk dijalankan di database
+method is_valid() berfungsi untuk memeriksa apakah semua field yang diminta pada form sudah terisi, lalu mengecek apakah data yang dimasukkan sesuai dengan fieldnya, contoh IntegerField maka is_valid() akan mengecek apakah user memasukkan angka.Selain itu is_valid juga mengecek ketentuan tambahan seperti maksimal panjang character dll. Kita membutuhkan method is_valid karena untuk mencegah adanya error yang ditimbulkan karena ketidaksesuaian tipe data maupun field yang kosong.
 ```
 
-## Mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+## Fungsi CSRF
 ```
-Django memungkinkan kita untuk membuat real product tanpa perlu mempelajari SQL secara mendalam, jadi pemula bisa lebih fokus pada logika pengembangan perangkat lunak terlebih dahulu tanpa perlu takut untuk mempelajari SQL sebagai database.
+Kita membutuhkan CSRF karena CSRF memberi token unik pada setiap form POST yang dikirim bersamaan dengan request form. Sehingga kita bisa mengecek apakah request yang didapatkan webserver valid atau tidak berdasarkan token unik pada setiap request. Hal tersebut bisa dimanfaatkan penyerang dengan memaksa user melakukan fake request ke webserver tanpa sepengetahuan user, contoh ketika user masih login pada akun yang dimiliki pada web kita lalu penyerang memberi suatu web berisi form yang jika dibuka akan mengirim request ke server, tanpa CSRF request ini akan dianggap sah dan bisa merugikan user.
 ```
 
-## Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step
+```
+- Membuat masing-masing fungsi pada views.py yang ada pada aplikasi main dimana fungsi JSON dan XML akan mengembalikan data dari semua product yang sudah dibuat baik dalam JSON maupun XML. Dan show_json_by_id maupun show_xml_by_id berfungsi mengembalikan data suatu product berdasarkan id nya dalam bentuk JSON maupun XML
+- Import seluruh fungsi yang dibuat pada urls.py yang ada pada main lalu menambahkan path nya sesuai dengan kebutuhan pada urlpatterns
+- Membuat function create_product pada views.py lalu melakukn routing dengan menambahkan pada urls.py dan membuat forms.py yang berisi class untuk form create_product serta membuat create_product.html yang berisi form create_product. Mengubah main.html dengan menambahkan tombol add product yang akan menjalankan function create_product sehingga membuka create_product.html dan memastikan isi form valid.
+- Membuat product_detail.html lalu membuat function product_detail dan melakukan routing dan memodifikasi main.html dengan menambahkan tombol detail product yang akan menjalankan function product_detail dan akan di redirect ke product_detail.html
+```
+
+## Apakah ada feedback untuk asisten dosen tutorial 2 yang telah kamu kerjakan sebelumnya?
 ```
 Sudah cukup baik, responsif dan sangat membantu.
 ```
-<<<<<<< HEAD
+
+## Screenshot postman
+```
+
+```
+
 =======
