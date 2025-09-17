@@ -1,7 +1,6 @@
 ## mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 ```
-Dalam proses pengembangan, ada kalanya kita perlu mengirimkan data dari satu stack ke stack lainnya contohnya mengirim data dari backend ke frontend. Data yang dikirimkan bisa bermacam-macam bentuknya. Beberapa contoh format data yang umum digunakan antara lain HTML, XML, dan JSON. Implementasi data delivery dalam bentuk HTML sudah kamu pelajari pada tutorial sebelumnya. Pada tutorial ini akan diajarkan terkait XML dan JSON.
-
+Dalam proses pengembangan, ada kalanya kita perlu mengirimkan data dari satu stack ke stack lainnya contohnya mengirim data dari backend ke frontend. Data yang dikirimkan bisa bermacam-macam bentuknya. Beberapa contoh format data yang umum digunakan antara lain HTML, XML, dan JSON. 
 ```
 
 ## Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
