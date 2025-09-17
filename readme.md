@@ -35,6 +35,10 @@ Sudah cukup baik, responsif dan sangat membantu.
 
 ## Screenshot postman
 ```
+<img width="2879" height="1716" alt="Screenshot 2025-09-17 112702" src="https://github.com/user-attachments/assets/f5ca6766-7d9b-4ba2-96e8-e53ad7b50b31" />
+<img width="2879" height="1706" alt="Screenshot 2025-09-17 112725" src="https://github.com/user-attachments/assets/45ea3ef2-7191-4cca-ab8a-9312cfd6b3da" />
+<img width="2879" height="1714" alt="Screenshot 2025-09-17 112749" src="https://github.com/user-attachments/assets/4874cee7-a6ff-4f7a-a8fb-362eece36593" />
+<img width="2879" height="1712" alt="Screenshot 2025-09-17 112804" src="https://github.com/user-attachments/assets/f6bcf593-91cb-418e-ac3e-a038471b3a51" />
 
 ```
 
