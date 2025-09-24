@@ -16,7 +16,22 @@
 <a href="{% url 'main:delete_product_by_id' %}">
   <button>- Delete Product</button>
 </a>
+
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<h5>Hello, {{ name }}</h5>
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
 <hr>
+
+<a href="?filter=all">
+    <button type="button">All Articles</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Articles</button>
+</a> 
 
 {% if not products_list %}
 <p>Belum ada data produk pada fantasy shop.</p>
