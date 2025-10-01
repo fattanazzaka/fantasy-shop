@@ -12,17 +12,16 @@
 
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Latest Football Product</h1>
-      <p class="text-gray-600">Stay updated with the latest football stories and analysis</p>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Football Product</h1>
     </div>
 
     <!-- Filter Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-green-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white">
+        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-[#182D43] text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white">
           All Product
         </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-green-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white">
+        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-green-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#AF985C] hover:text-white">
           My Product
         </a>
       </div>
@@ -37,7 +36,7 @@
     {% if not products_list %}
       <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
         <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'images/download (1).png' %}" alt="No news available" class="w-full h-full object-contain">
+          <img src="{% static 'images/download (1).png' %}" alt="No product available" class="w-full h-full object-contain">
         </div>
         <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
         <p class="text-gray-500 mb-6">Be the first to upload product</p>
