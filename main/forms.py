@@ -8,5 +8,3 @@ class ProductForm(ModelForm):
         fields = ["name", "price", "description","category", "thumbnail", "is_featured"]
 
 
-class DeleteProductForm(forms.Form):
-    product_id = forms.UUIDField(label="ID Produk")  

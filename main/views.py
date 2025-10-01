@@ -3,7 +3,6 @@ from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import ProductForm
 from main.models import Product
-from main.forms import DeleteProductForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -55,18 +54,10 @@ def show_product(request, id):
     return render(request, "product_detail.html", context)
 
 
-def delete_product_by_id(request):
-    if request.method == "POST":
-        form = DeleteProductForm(request.POST)
-        if form.is_valid():
-            product_id = form.cleaned_data["product_id"]
-            product = get_object_or_404(Product, id=product_id)
-            product.delete()
-            return redirect("main:show_main")  # balik ke daftar produk
-    else:
-        form = DeleteProductForm()
-
-    return render(request, "delete_product.html", {"form": form})
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 def show_xml(request):
      products_list = Product.objects.all()
@@ -127,3 +118,21 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
