@@ -83,3 +83,38 @@ Tidak, penggunaan cookies tidak aman secara default. Cookie standar pada dasarny
 - pada models, tambahkan variabel user, lalu setiap user login tambahkan setcookies pada functionnya untuk mendapatkan last session user tersebut
 - modifikasi product_detail.html dengan menambahkan username dari product yang membuat product tersbut
 ```
+
+## Tugas 5
+```
+1. Origin and importance
+Aturan CSS yang dibuat oleh pembuat lebih kuat dari gaya bawaan browser.
+
+Selector Specify
+Urutan dari yang paling spesifik:
+-Gaya di dalam tag HTML (style="...")
+-Selektor ID (#header)
+-Selektor Class (.card)
+-Selektor Elemen (div)
+
+Order of Appearance
+aturan yang ditulis paling akhir di file CSS yang akan digunakan.
+
+Deafult values
+Jika tidak ada aturan sama sekali, elemen akan mewarisi gaya dari induknya (misalnya, teks mewarisi warna dari body). Jika tidak bisa diwariskan, browser akan menggunakan nilai standarnya (misalnya, latar belakang transparan).
+
+2. Responsive design adalah konsep penting karena memastikan sebuah situs web dapat tampil dan berfungsi dengan baik di berbagai ukuran layar perangkat, mulai dari desktop besar hingga ponsel kecil. Tanpa ini, pengguna perangkat mobile akan kesulitan menavigasi situs yang didesain hanya untuk layar lebar, yang dapat menyebabkan pengalaman pengguna yang buruk.
+
+3.Padding: Ruang transparan di dalam border, yang berada di antara border dan konten elemen. diapkai untuk memberikan space bagi konten di dalamnya.
+
+Border: Garis yang mengelilingi padding dan konten, bisa memiliki ketebalan, gaya (solid, dashed), dan warna.
+
+Margin: Ruang transparan di luar border. Margin bisa dipakai untuk menciptakan jarak antara elemen tersebut dengan elemen lain di sekitarnya.
+
+4. Flexbox (Flexible Box Layout): Sebuah model layout satu dimensi yang dirancang untuk menata item dalam satu baris atau satu kolom. Bagus untuk membagi ruang dan menyelaraskan item di dalam sebuah kontainer, seperti menu navigasi, tombol-tombol yang berjajar, atau komponen kartu. Kegunaan utamanya adalah untuk layout skala kecil.
+
+Grid Layout: Sebuah model layout dua dimensi yang memungkinkan penataan item dalam bentuk baris dan kolom secara bersamaan, mirip seperti tabel atau spreadsheet. Ini sangat kuat untuk membangun layout halaman utama yang kompleks, seperti tata letak majalah atau dasbor aplikasi, di mana elemen harus selaras baik secara horizontal maupun vertikal.
+
+5. - Setup untuk menggunakan tailwind css
+- menambahkan global.css pada static untuk emrapikan input dan menambahkan images untuk gambar gambar yang akan digunakan
+- fokus selanjutnya mengubah dan menambahkan file file html untuk menambahkan fungsi, seperti contohnya navbar.html dan juga menambahkan button-button menggunakan code dari tailwind pada file html yang dibutuhkan
+- mempercantik menggunakan css
