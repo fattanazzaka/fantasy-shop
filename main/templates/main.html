@@ -131,6 +131,7 @@ function buildProductCardElement(productItem) {
   const categoryLabel = getReadableCategoryName(productItem.category);
   const isFeatured = productItem.is_featured;
   const isBestSeller = productItem.is_product_hot; // Gunakan field yang tepat dari backend
+  const price = productItem.formatted_price;
   
 
   const thumbnailHtml = productItem.thumbnail 

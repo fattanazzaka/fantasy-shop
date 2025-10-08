@@ -9,8 +9,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+import json
+
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -49,7 +51,8 @@ def show_product(request, id):
     product.increment_views()
 
     context = {
-        'product': product
+        'product': product,
+        'product_id': str(id)
     }
     return render(request, "product_detail.html", context)
 
@@ -66,8 +69,22 @@ def show_xml(request):
 
 def show_json(request):
     products_list = Product.objects.all()
-    json_data = serializers.serialize("json", products_list)
-    return HttpResponse(json_data, content_type="application/json")
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.formatted_price(),
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'product_views': product.product_views,
+            'is_featured': product.is_featured,
+            'user_id': product.user_id,
+        }
+        for product in products_list
+    ]
+
+    return JsonResponse(data, safe=False)
 
 def show_xml_by_id(request, product_id):
    try:
@@ -78,13 +95,25 @@ def show_xml_by_id(request, product_id):
        return HttpResponse(status=404)
 
 def show_json_by_id(request, product_id):
-   try:
-       product_item = Product.objects.get(pk=product_id)
-       json_data = serializers.serialize("json", [product_item])
-       return HttpResponse(json_data, content_type="application/json")
-   except Product.DoesNotExist:
-       return HttpResponse(status=404)
-   
+    try:
+        product = Product.objects.select_related('user').get(pk=product_id)
+        data = {
+            'id': str(product.id),
+            'name': product.name,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'product_views': product.product_views,
+            'price': product.formatted_price(),
+            'is_featured': product.is_featured,
+            'user_id': product.user_id,
+            'user_username': product.user.username if product.user_id else None,
+        }
+        return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+
 def register(request):
     form = UserCreationForm()
 
@@ -96,6 +125,42 @@ def register(request):
             return redirect('main:login')
     context = {'form':form}
     return render(request, 'register.html', context)
+
+def ajax_register(request):
+    if request.method == 'POST':
+        try:
+            # Parse data JSON dari body request
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password1')
+            password_confirm = data.get('password2')
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
+
+        # Gunakan UserCreationForm untuk validasi yang konsisten
+        form = UserCreationForm(data={'username': username, 'password': password, 'password2': password_confirm})
+        
+        if form.is_valid():
+            try:
+                # Simpan pengguna baru
+                form.save()
+                return JsonResponse({
+                    'status': 'success', 
+                    'message': 'Account created successfully! Please log in.', 
+                    # Anggap URL login Anda adalah 'main:login'
+                    'redirect_url': reverse('main:login') 
+                }, status=201)
+            except Exception:
+                 # Tangani kegagalan penyimpanan yang tidak terduga
+                 return JsonResponse({'status': 'error', 'message': 'Could not save user.'}, status=500)
+        else:
+            # Ekstrak pesan error pertama untuk ditampilkan
+            errors = dict(form.errors)
+            first_error_message = next(iter(errors.values()))[0]
+            return JsonResponse({'status': 'error', 'message': f'{first_error_message}'}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
+
 
 def login_user(request):
    if request.method == 'POST':
@@ -112,6 +177,39 @@ def login_user(request):
       form = AuthenticationForm(request)
    context = {'form': form}
    return render(request, 'login.html', context)
+
+def ajax_login(request):
+    if request.method == 'POST':
+        try:
+            # Parse data JSON dari body request
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
+
+        # Otentikasi Pengguna
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Login berhasil dan buat sesi
+            login(request, user)
+            
+            # Kembalikan URL pengalihan
+            return JsonResponse({
+                'status': 'success', 
+                'message': f'Welcome back, {username}!', 
+                # Anggap URL utama Anda adalah 'main:show_main'
+                'redirect_url': reverse("main:show_main") 
+            }, status=200)
+        else:
+            # Login gagal
+            return JsonResponse({
+                'status': 'error', 
+                'message': 'Invalid username or password.'
+            }, status=401)
+            
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
 def logout_user(request):
     logout(request)
