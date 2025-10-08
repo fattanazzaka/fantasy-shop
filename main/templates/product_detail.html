@@ -2,65 +2,251 @@
 {% load static %}
 
 {% block meta %}
-<title>{{ product.name }} - Fantasy Shop</title>
+<title>Product Detail - Fantasy Shop</title>
 {% endblock meta %}
 
 {% block content %}
 <div class="bg-white w-full min-h-screen">
     
-    <section class="bg-slate-50/70 py-8 md:py-12 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav class="text-sm text-gray-500 mb-8" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex space-x-2">
-                    <li><a href="{% url 'main:show_main' %}" class="hover:text-[#182D43]">Home</a></li>
-                    <li><span>/</span></li>
-                    <li class="font-medium text-gray-800" aria-current="page">{{ product.name }}</li>
-                </ol>
-            </nav>
-
-            <div class="aspect-[16/9] bg-white rounded-lg overflow-hidden ring-1 ring-gray-200 flex items-center justify-center">
-                {% if product.thumbnail %}
-                    <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-                {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-semibold">No Image Available</div>
-                {% endif %}
-            </div>
+    <!-- Loading State -->
+    <div id="loading-state" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-slate-50/70 rounded-lg border border-slate-200 p-12 text-center">
+            <svg class="animate-spin h-8 w-8 text-[#182D43] inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading product detail...</p>
         </div>
-    </section>
+    </div>
 
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-        
-        <div class="mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-[#182D43] leading-tight mb-4">
-                {{ product.name }}
-            </h1>
-            <p class="text-3xl md:text-4xl font-bold text-[#AF985C]">
-                {{ product.formatted_price }}
-            </p>
-        </div>
-        
-        <div>
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <span class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-[#182D43] border-[#AF985C]">
-                        Description
-                    </span>
-                </nav>
+    <!-- Error State -->
+    <div id="error-state" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 hidden">
+        <div class="bg-slate-50/70 rounded-lg border border-slate-200 p-12 text-center">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-red-500 text-5xl">⚠️</div>
             </div>
-            <div class="py-10">
-                <div class="prose max-w-none text-gray-700 text-base md:text-lg leading-relaxed">
-                    {{ product.description|linebreaks }}
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-6">
-                    <p class="text-sm text-gray-600">
-                        Product by: 
-                        <strong class="font-medium text-gray-800">{{ product.user.username|default:"Anonymous" }}</strong>
-                    </p>
-                </div>
-            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load product</h3>
+            <p class="text-gray-500 mb-6">Please try again later.</p>
+            <a href="{% url 'main:show_main' %}" class="inline-flex items-center px-4 py-2 bg-[#182D43] text-white rounded-lg hover:bg-opacity-90 transition-all">
+                Back to Products
+            </a>
         </div>
-    </section>
+    </div>
     
+    <!-- Product Content -->
+    <div id="product-content" class="hidden">
+        <!-- Hero Section with Image -->
+        <section class="bg-slate-50/70 py-8 md:py-12 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Breadcrumb -->
+                <nav class="text-sm text-gray-500 mb-8" aria-label="Breadcrumb">
+                    <ol class="list-none p-0 inline-flex space-x-2">
+                        <li><a href="{% url 'main:show_main' %}" class="hover:text-[#182D43]">Home</a></li>
+                        <li><span>/</span></li>
+                        <li id="breadcrumb-name" class="font-medium text-gray-800" aria-current="page">Loading...</li>
+                    </ol>
+                </nav>
+
+                <!-- Product Image -->
+                <div id="product-image-container" class="aspect-[16/9] bg-white rounded-lg overflow-hidden ring-1 ring-gray-200 flex items-center justify-center">
+                    <!-- Image will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Details Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+            
+            <!-- Title and Price -->
+            <div class="mb-10">
+                <!-- Badges -->
+                <div id="badges-container" class="flex flex-wrap items-center gap-2 mb-4">
+                    <!-- Dynamic badges will be inserted here -->
+                </div>
+
+                <h1 id="product-title" class="text-4xl md:text-5xl font-bold text-[#182D43] leading-tight mb-4">
+                    Loading...
+                </h1>
+                <p id="product-price" class="text-3xl md:text-4xl font-bold text-[#AF985C]">
+                    Loading...
+                </p>
+
+                <!-- Meta Info -->
+                <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4 mt-4">
+                    <span id="product-views">
+                        <!-- Views will be inserted here -->
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Description Tab -->
+            <div>
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <span class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-[#182D43] border-[#AF985C]">
+                            Description
+                        </span>
+                    </nav>
+                </div>
+                <div class="py-10">
+                    <div class="prose max-w-none text-gray-700 text-base md:text-lg leading-relaxed">
+                        <div id="product-description" class="whitespace-pre-line">
+                            <!-- Description will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Author Info -->
+                    <div class="mt-12 border-t border-gray-200 pt-6">
+                        <p class="text-sm text-gray-600">
+                            Product by: 
+                            <strong id="product-author" class="font-medium text-gray-800">Loading...</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
+
+<script>
+// Configuration
+const PRODUCT_ID = "{{ product_id }}";
+const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+// DOM Elements
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const productContent = document.getElementById('product-content');
+const breadcrumbName = document.getElementById('breadcrumb-name');
+const productImageContainer = document.getElementById('product-image-container');
+const badgesContainer = document.getElementById('badges-container');
+const productTitle = document.getElementById('product-title');
+const productPrice = document.getElementById('product-price');
+const productViews = document.getElementById('product-views');
+const productDescription = document.getElementById('product-description');
+const productAuthor = document.getElementById('product-author');
+
+// Helper function to get category name
+function getReadableCategoryName(categoryCode) {
+    const categoryMapping = {
+        shoes: 'Football Shoes',
+        jersey: 'Jersey and Apparel',
+        equipment: 'Training Equipment',
+        merchandise: 'Club Merchandise',
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+}
+
+// Show/hide page sections
+function displayPageSection({ showLoading = false, showError = false, showContent = false }) {
+    loadingState.classList.toggle('hidden', !showLoading);
+    errorState.classList.toggle('hidden', !showError);
+    productContent.classList.toggle('hidden', !showContent);
+}
+
+// Render product details
+function renderProductDetails(product) {
+    // Update document title
+    document.title = `${product.name} - Fantasy Shop`;
+    
+    // Update breadcrumb
+    breadcrumbName.textContent = product.name;
+    
+    // Update product image
+    if (product.thumbnail) {
+        productImageContainer.innerHTML = `
+            <img src="${product.thumbnail}" 
+                 alt="${product.name}" 
+                 class="w-full h-full object-cover">
+        `;
+    } else {
+        productImageContainer.innerHTML = `
+            <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-semibold">
+                No Image Available
+            </div>
+        `;
+    }
+    
+    // Update badges
+    const categoryLabel = getReadableCategoryName(product.category);
+    let badgesHtml = `
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#AF985C] text-[#182D43]">
+            ${categoryLabel}
+        </span>
+    `;
+    
+    if (product.is_featured) {
+        badgesHtml += `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white border border-gray-300 text-[#182D43]">
+                Featured
+            </span>
+        `;
+    }
+    
+    // Check if product is hot (views > 20)
+    if (product.product_views > 20) {
+        badgesHtml += `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#182D43] text-white">
+                Best Seller
+            </span>
+        `;
+    }
+    
+    badgesContainer.innerHTML = badgesHtml;
+    
+    // Update title and price
+    productTitle.textContent = product.name;
+    productPrice.textContent = product.price; // Sudah formatted dari backend
+    
+    // Update views
+    productViews.textContent = `${product.product_views} views`;
+    
+    // Update description
+    productDescription.textContent = product.description;
+    
+    // Update author
+    productAuthor.textContent = product.user_username || 'Anonymous';
+    
+    // Show content
+    displayPageSection({ showContent: true });
+}
+
+// Fetch product data
+async function fetchProductData() {
+    try {
+        displayPageSection({ showLoading: true });
+        
+        console.log('Fetching product data...');
+        console.log('Product ID:', PRODUCT_ID);
+        console.log('API Endpoint:', PRODUCT_DETAIL_ENDPOINT);
+        
+        const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product data');
+        }
+
+        const product = await response.json();
+        console.log('Product received:', product);
+        
+        renderProductDetails(product);
+        
+    } catch (error) {
+        console.error('Error loading product:', error);
+        displayPageSection({ showError: true });
+    }
+}
+
+// Initialize page
+function initializeProductPage() {
+    fetchProductData();
+}
+
+// Start application
+initializeProductPage();
+</script>
 {% endblock content %}
