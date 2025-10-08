@@ -18,10 +18,10 @@
     <!-- Filter Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-[#182D43] text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white">
+        <a id="filter-all" class="{% if request.GET.filter == 'all' or not request.GET.filter  %} bg-[#182D43] text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white">
           All Product
         </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-green-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#AF985C] hover:text-white">
+        <a id="filter-my" class="{% if request.GET.filter == 'my' %} bg-green-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#AF985C] hover:text-white">
           My Product
         </a>
       </div>
@@ -31,26 +31,247 @@
         </div>
       {% endif %}
     </div>
+    
 
-    <!-- News Grid -->
-    {% if not products_list %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'images/download (1).png' %}" alt="No product available" class="w-full h-full object-contain">
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-        <p class="text-gray-500 mb-6">Be the first to upload product</p>
-        <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-          Create Product
-        </a>
+    <!-- Product Grid -->
+    <!-- Loading State -->
+    <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-8 w-8 text-gray-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading Product...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden"></div>
+
+    <!-- Product Grid -->
+    <div id="grid" class="hidden"></div>
+
+    <!-- Empty State -->
+    <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <div class="w-32 h-32 mx-auto mb-4">
+        <img src="{% static 'image/no-product.png' %}" alt="No product available" class="w-full h-full object-contain">
       </div>
-    {% else %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for products in products_list %}
-          {% include 'card_product.html' with product=products %}
-        {% endfor %}
-      </div>
-    {% endif %}
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
+      <p class="text-gray-500 mb-6">Be the first to sell football product with the community.</p>
+      <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-[#182D43] text-white bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white">
+        Create Product
+      </a>
+    </div>
   </div>
 </div>
+
+<script>
+// Configuration
+const NEWS_API_ENDPOINT = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM Elements
+const loadingSpinner = document.getElementById('loading');
+const errorMessage = document.getElementById('error');
+const emptyStateDisplay = document.getElementById('empty');
+const productGridContainer = document.getElementById('grid');
+const showAllProductButton = document.getElementById('filter-all');
+const showMyProductButton = document.getElementById('filter-my');
+
+// State Variables
+let activeFilter = 'all';
+let allProductData = [];
+
+// Update filter button appearance
+function updateFilterButtonsAppearance() {
+  if (!showAllProductButton || !showMyProductButton) return;
+  
+  if (activeFilter === 'all') {
+    showAllProductButton.className = 'bg-[#182D43] text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white';
+    showMyProductButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#AF985C] hover:text-white';
+  } else {
+    showMyProductButton.className = 'bg-[#AF985C] text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#AF985C] hover:text-white';
+    showAllProductButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#182D43] hover:text-white';
+  }
+}
+
+// Show/hide page sections
+function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+  loadingSpinner.classList.toggle('hidden', !showLoading);
+  errorMessage.classList.toggle('hidden', !showError);
+  emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+  productGridContainer.classList.toggle('hidden', !showGrid);
+  
+  // Add grid classes when showing grid
+  if (showGrid) {
+    productGridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+  }
+}
+
+// Get readable category name
+function getReadableCategoryName(categoryCode) {
+  const categoryMapping = {
+    transfer: 'Transfer',
+    update: 'Update',
+    exclusive: 'Exclusive',
+    match: 'Match',
+    rumor: 'Rumor',
+    analysis: 'Analysis',
+  };
+  return categoryMapping[categoryCode] || categoryCode;
+}
+
+// Create product card element
+function buildProductCardElement(productItem) {
+  const articleElement = document.createElement('article');
+  articleElement.className = 'group bg-white rounded-lg border-2 border-transparent hover:border-[#AF985C] transition-all duration-300 shadow-md hover:shadow-xl overflow-hidden flex flex-col';
+
+  const detailLink = `{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.id);
+  const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.id);
+  const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.id);
+
+  const categoryLabel = getReadableCategoryName(productItem.category);
+  const isFeatured = productItem.is_featured;
+  const isBestSeller = productItem.is_product_hot; // Gunakan field yang tepat dari backend
+  
+
+  const thumbnailHtml = productItem.thumbnail 
+    ? `<img src='${productItem.thumbnail}' alt='${productItem.name}' class='w-full h-full object-cover'>` 
+    : `<div class='w-full h-full bg-gray-100'></div>`;
+
+  const featuredBadge = isFeatured 
+    ? `<span class='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white text-[#182D43]'>Featured</span>` 
+    : '';
+  
+  const bestSellerBadge = isBestSeller 
+    ? `<span class='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#182D43] text-white'>Best Seller</span>` 
+    : '';
+
+  // Truncate description (max 20 words)
+  const truncatedDescription = productItem.description.split(' ').slice(0, 20).join(' ') + (productItem.description.split(' ').length > 20 ? '...' : '');
+
+  const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(productItem.user_id)
+    ? `<div class='flex justify-end space-x-4 mt-3 border-t border-gray-100 pt-3'>
+        <a href='${editLink}' class='text-xs text-[#AF985C] hover:text-[#182D43] transition-colors'>Edit</a>
+        <a href='${deleteLink}' class='text-xs text-red-500 hover:text-red-700 transition-colors' onclick='return confirm("Are you sure you want to delete this product?")'>Delete</a>
+      </div>`
+    : '';
+
+  const completeCardHtml = `
+    <div class="p-3">
+      <div class="aspect-[4/3] relative overflow-hidden rounded-lg ring-1 ring-gray-200">
+        ${thumbnailHtml}
+        
+        <div class="absolute top-0 left-0 right-0 flex justify-between p-3 z-10">
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#AF985C] text-[#182D43]">
+            ${categoryLabel}
+          </span>
+          ${featuredBadge}
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 p-3 z-10">
+          ${bestSellerBadge}
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 pt-2 flex flex-col flex-grow">
+      <h3 class="text-lg font-semibold text-[#182D43] mb-2 line-clamp-2 leading-tight">
+        <a href="${detailLink}" class="group-hover:text-[#AF985C] transition-colors">${productItem.name}</a>
+      </h3>
+
+      <div class="flex justify-between items-center text-sm text-gray-500 mb-3">
+        <span>${productItem.product_views} views</span>
+      </div>
+      
+      <p class="text-sm text-gray-600 font-light line-clamp-2 mb-4">
+        ${truncatedDescription}
+      </p>
+
+      <div class="mt-auto pt-4 flex justify-between items-center">
+        <p class="text-lg font-bold text-[#182D43]">
+          ${productItem.price}
+        </p>
+        
+        <a href="${detailLink}" class="bg-[#182D43] text-white font-bold text-sm py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all">
+          Show Details
+        </a>
+      </div>
+
+      ${editDeleteButtons}
+    </div>
+  `;
+
+  articleElement.innerHTML = completeCardHtml;
+  return articleElement;
+}
+
+// Render all product cards
+function renderAllProductCards(productItems) {
+  productGridContainer.innerHTML = '';
+  productItems.forEach(productItem => {
+    const cardElement = buildProductCardElement(productItem);
+    productGridContainer.appendChild(cardElement);
+  });
+}
+
+// Filter and display product
+function filterAndDisplayProduct() {
+  updateFilterButtonsAppearance();
+  
+  const filteredProduct = activeFilter === 'all' 
+    ? allProductData 
+    : allProductData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+  
+  if (filteredProduct.length === 0) {
+    displayPageSection({ showEmpty: true });
+  } else {
+    renderAllProductCards(filteredProduct);
+    displayPageSection({ showGrid: true });
+  }
+}
+
+// Fetch product data from server
+async function fetchProductFromServer() {
+  try {
+    displayPageSection({ showLoading: true });
+    
+    const response = await fetch(NEWS_API_ENDPOINT, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch product data from server');
+    }
+
+    const productData = await response.json();
+    allProductData = productData || [];
+    
+    filterAndDisplayProduct();
+  } catch (error) {
+    console.error('Error loading product:', error);
+    displayPageSection({ showError: true });
+  }
+}
+
+// Event handlers
+function handleShowAllProductClick() {
+  activeFilter = 'all';
+  filterAndDisplayProduct();
+}
+
+function handleShowMyProductClick() {
+  activeFilter = 'my';
+  filterAndDisplayProduct();
+}
+
+// Initialize page
+function initializeProductPage() {
+  showAllProductButton.addEventListener('click', handleShowAllProductClick);
+  showMyProductButton.addEventListener('click', handleShowMyProductClick);
+  
+  fetchProductFromServer();
+}
+
+// Start application
+initializeProductPage();
+</script>
 {% endblock content %}
